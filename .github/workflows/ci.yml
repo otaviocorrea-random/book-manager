@@ -36,7 +36,8 @@ jobs:
           RAILS_ENV: test
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
-          sudo systemctl start postgresql
+          sudo mkdir /var/pgsql_socket
+          sudo ln /tmp/.s.PGSQL.5432 /var/pgsql_socket/
           sudo apt-get -yqq install libpq-dev
           gem install bundler
           bundle install --jobs 4 --retry 3
