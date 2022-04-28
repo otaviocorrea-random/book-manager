@@ -1,3 +1,5 @@
+name: Rails CI
+on: [push, pull]
 default:
   image: "ruby:3.1.1"
 
