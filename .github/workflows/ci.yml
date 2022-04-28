@@ -1,5 +1,5 @@
 name: Rails CI
-on: [push, pull]
+on: [push, merge]
 default:
   image: "ruby:3.1.1"
 
