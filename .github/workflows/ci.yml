@@ -1,0 +1,51 @@
+default:
+  image: "ruby:3.1.1"
+
+cache:
+  key: 'key1'
+  paths:
+    - apt-cache/
+    - vendor/
+    - node_modules/
+    - .yarn/
+
+services:
+  - postgres:latest
+  - redis:latest
+  
+variables:
+  BUNDLE_PATH: vendor/bundle
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: 123
+  POSTGRES_HOST_AUTH_METHOD: trust
+  DB_USERNAME: postgres
+  DB_PASSWORD: 123
+  DB_HOST: postgres
+  DB_POOL: 5
+  RAILS_ENV: test
+  DISABLE_SPRING: 1
+  REDIS_URL: redis://redis:6379/
+
+before_script:
+  - apt-get update -qy
+  #install node.js
+  - apt-get install -y nodejs
+  # Install yarn
+  - wget -q -O - https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+  - echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
+  - apt-get update -yq
+  - apt-get install -y yarn
+  # bundle install 
+  - gem install bundler --no-document
+  - bundle check || bundle install --jobs $(nproc) "${FLAGS[@]}" --path=vendor
+  - yarn install --check-files --cache-folder .yarn
+  # Setup database
+  - RAILS_ENV=test bundle exec rails db:create
+  - RAILS_ENV=test bundle exec rails db:schema:load
+  - RAILS_ENV=test bundle exec rake db:migrate
+
+tests:
+  stage: test
+  script:
+    - bundle exec rails test
