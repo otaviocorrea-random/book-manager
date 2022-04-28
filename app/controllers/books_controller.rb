@@ -4,6 +4,7 @@ class BooksController < ApplicationController
 
   def index
     @books = Book.all
+    apply_filters
     render json: { :data => { :books => @books } }
   end
 
@@ -61,5 +62,15 @@ class BooksController < ApplicationController
 
   def rating_params
     params.permit(:user_id, :review, :rating, :read)
+  end
+
+  def filter_params
+    params.permit(:title, :author, :genre)
+  end
+
+  def apply_filters
+    @books = @books.by_title(filter_params[:title]) if filter_params[:title].present?
+    @books = @books.by_author(filter_params[:author]) if filter_params[:author].present?
+    @books = @books.by_genre(filter_params[:genre]) if filter_params[:genre].present?
   end
 end
