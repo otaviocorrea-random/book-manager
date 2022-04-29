@@ -4,16 +4,13 @@
 
 # Autenticação
 <details> 
-  <summary>Login 🔒</summary>
+  <summary>Login</summary>
 
   `POST` => `/auth/sign_in`
 
   headers:
   ```text
   Content-Type: application/json
-  access_token: 'TOKEN_GERADO_NO_HEADER_LOGIN'
-  uid: 'TOKEN_GERADO_NO_HEADER_LOGIN'
-  client: 'TOKEN_GERADO_NO_HEADER_LOGIN'
   ```
   body:
   ```json
