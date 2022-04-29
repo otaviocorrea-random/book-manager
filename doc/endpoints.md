@@ -215,6 +215,8 @@
 
 <details> 
   <summary>Atualizar senha 🔒</summary>
+  
+  `PUT` => `/auth`
 
   headers:
   ```text
