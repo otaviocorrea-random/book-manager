@@ -4,7 +4,7 @@
 
 # Autenticação
 <details> 
-  <summary>Logout 🔒</summary>
+  <summary>Login 🔒</summary>
 
   `POST` => `/auth/sign_in`
 
