@@ -1,6 +1,6 @@
-class BooksController < ApplicationController
+class Api::BooksController < ApiController
+  before_action :authenticate_api_user!
   before_action :set_book, only: [:show, :edit, :update, :destroy, :create_or_update_rating]
-  before_action :set_user, only: [:create_or_update_rating]
 
   def index
     @books = Book.all
@@ -15,7 +15,7 @@ class BooksController < ApplicationController
   def create
     @book = Book.new(create_params)
     if @book.save
-      render json: book_hash, status: :created, location: @book 
+      render json: book_hash, status: :created
     else
       render json: errors_hash, status: :unprocessable_entity 
     end
@@ -23,7 +23,7 @@ class BooksController < ApplicationController
 
   def update
     if @book.update(create_params)
-      render json: book_hash, status: :ok, location: @book 
+      render json: book_hash, status: :ok
     else
       render json: errors_hash, status: :unprocessable_entity
     end
@@ -39,7 +39,7 @@ class BooksController < ApplicationController
 
   # Ratings
   def create_or_update_rating
-    @user_book = UsersBook.find_or_create_by(user_id: @user.id, book_id: @book.id)
+    @user_book = UsersBook.find_or_create_by(user: current_api_user, book: @book)
     if @user_book.update(rating_params)
       render json: { :data => { :rating => @user_book } }
     else
@@ -48,6 +48,14 @@ class BooksController < ApplicationController
   end
 
   private
+  def set_book
+    begin 
+      @book = Book.find(params[:book_id] || params[:id]) 
+    rescue 
+      render json: { message: 'Book not found' }, status: :not_found
+    end
+  end
+
   def book_hash
     { :data => { :book => @book, :ratings => @book.ratings_hash } }
   end
@@ -61,7 +69,7 @@ class BooksController < ApplicationController
   end
 
   def rating_params
-    params.permit(:user_id, :review, :rating, :read)
+    params.permit(:review, :rating, :read)
   end
 
   def filter_params

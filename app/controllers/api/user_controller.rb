@@ -1,4 +1,5 @@
-class UsersController < ApplicationController
+class Api::UserController < ApiController
+  before_action :authenticate_api_user!, except: [:create]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   def show
     render json: user_hash
@@ -7,7 +8,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(create_params)
     if @user.save
-      render json: user_hash, status: :created, location: @user 
+      render json: user_hash, status: :created
     else
       render json: errors_hash, status: :unprocessable_entity 
     end
@@ -15,7 +16,7 @@ class UsersController < ApplicationController
 
   def update
     if @user.update(create_params)
-      render json: user_hash, status: :ok, location: @user 
+      render json: user_hash, status: :ok
     else
       render json: errors_hash, status: :unprocessable_entity
     end
@@ -39,6 +40,14 @@ class UsersController < ApplicationController
   end
 
   def create_params
-    params.permit(:name, :email)
+    params.permit(:name, :email, :password, :password_confirmation)
+  end
+
+  def set_user
+    begin 
+      @user = current_api_user 
+    rescue 
+      render json: { message: 'User not found' }, status: :not_found
+    end
   end
 end
