@@ -1,5 +1,6 @@
-Url base para teste => https://otabook.herokuapp.com/api
-🔒 => Requer headers de autenticação
+- Url base para teste => https://otabook.herokuapp.com/api
+
+- 🔒 => Requer headers de autenticação
 
 # Autenticação
 <details> 
